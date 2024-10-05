@@ -1,4 +1,3 @@
-
 # **S.I.F.T.E.R. — Seismic Investigation and Frequency Tracking for Extraterrestrial Research**
 
 ## Project Overview
@@ -81,6 +80,7 @@ SIFTER/
 
    ```bash
    pip install -r requirements.txt
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
    ```
 
 3. Install C++ dependencies and build the project:
@@ -133,7 +133,7 @@ The architecture consists of the following components:
 
 4. **Frontend Visualization**:
 
-   - Visualization of seismic data and classification results using tools like **Streamlit**, **Plotly**, or **Dash**.
+   - Visualization of seismic data and classification results using **Dash**.
 
 ---
 
@@ -142,7 +142,7 @@ The architecture consists of the following components:
 - **Data Preprocessing**:
 
   - Implements STA/LTA filtering and segmentation of seismic data.
-  
+
 - **Model Training**:
 
   - Models are trained in Python using **Random Forest**, **SVM**, and **Decision Trees**.
@@ -168,9 +168,7 @@ The final system is implemented in C++ for use on non-terrestrial seismometers, 
 
 A terrestrial front-end for real-time seismic data analysis and visualization:
 
-- **Streamlit** Dashboard: Provides an interactive UI for seismic event visualization.
-- **Plotly** Visualizations: Real-time waveform plotting and event timelines.
-- **Dash** (optional): Advanced data visualization in a web interface.
+- **Dash**: Advanced data visualization in a web interface.
 
 ---
 
