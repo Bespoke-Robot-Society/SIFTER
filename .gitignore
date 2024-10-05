@@ -1,0 +1,11 @@
+# Ignore virtual environment
+.venv/
+
+# Ignore data directory
+data/
+
+# Ignore directory
+.ipynb_checkpoints/
+
+# Ignore directory
+.vscode
