@@ -9,8 +9,59 @@ from config import (
     LUNAR_DATA_DIR,
 )
 from utils.helpers import encode_labels_and_convert_time
+from utils.dataloader import SpectrogramDataLoader
 from utils.image_processor import ImageProcessor
 from model.cnn_spectrogram import SpectrogramCNN
+
+
+def prepare_lunar_data_for_training(
+    lunar_data, lunar_labels_encoded, lunar_arrival_times_numeric
+):
+    print("Splitting lunar data into training and validation sets...")
+    X_train, X_val, y_event_train, y_event_val, y_time_train, y_time_val = (
+        train_test_split(
+            lunar_data,
+            lunar_labels_encoded,
+            lunar_arrival_times_numeric,
+            test_size=0.2,
+            random_state=42,
+        )
+    )
+
+    print("Preparing DataLoader for lunar training data...")
+    training_spectrogram_data_loader = SpectrogramDataLoader(
+        X_train, y_event_train, y_time_train
+    )
+    validation_spectrogram_data_loader = SpectrogramDataLoader(
+        X_val, y_event_val, y_time_val
+    )
+    train_loader = training_spectrogram_data_loader.get_data_loader()
+    val_loader = validation_spectrogram_data_loader.get_data_loader()
+
+    if train_loader is not None and val_loader is not None:
+        print("DataLoader successfully created for training.")
+    else:
+        print("Error: DataLoader creation failed.")
+
+    return train_loader, val_loader
+
+
+def initialize_and_train_model(train_loader):
+    print("Initializing SpectrogramCNN model...")
+    model = SpectrogramCNN()
+    criterion_event = nn.CrossEntropyLoss()
+    criterion_time = nn.MSELoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+    if train_loader:
+        print("Training model on lunar data...")
+        model.train_on_lunar_data(
+            train_loader, criterion_event, criterion_time, optimizer
+        )
+    else:
+        print("Error: Training skipped due to invalid DataLoader.")
+
+    return model
 
 
 def train_and_save_model():
@@ -32,48 +83,11 @@ def train_and_save_model():
         lunar_labels, lunar_arrival_times
     )
 
-    # # Prepare DataLoader for lunar data training
-    # print("Preparing DataLoader for lunar training and validation sets...")
-    # lunar_data_loader = prepare_lunar_data_for_training(
-    #     lunar_data, lunar_labels_encoded, lunar_arrival_times_numeric
-    # )
+    # Prepare DataLoader for lunar data training
+    train_loader, val_loader = prepare_lunar_data_for_training(
+        lunar_data, lunar_labels_encoded, lunar_arrival_times_numeric
+    )
 
-    # # Initialize and train the model on lunar data
-    # print("Initializing and training the model on lunar data...")
-    # model = SpectrogramCNN()
-    # criterion_event = nn.CrossEntropyLoss()
-    # criterion_time = nn.MSELoss()
-    # optimizer = optim.Adam(model.parameters(), lr=0.001)
-
-    # if lunar_data_loader:
-    #     print("Training model on lunar data...")
-    #     model.train_on_lunar_data(
-    #         lunar_data_loader, criterion_event, criterion_time, optimizer
-    #     )
-    # else:
-    #     print("Error: Training skipped due to invalid DataLoader.")
-    #     return
-
-    # # Prepare DataLoader for lunar data training
-    # print("Preparing DataLoader for Martian data (self-training)...")
-    # martian_data = preprocess_and_validate_martian_data(
-    #     MARTIAN_DATA_DIR, SAVE_DIR, combine_images=True
-    # )
-    # martian_data_loader = prepare_data_for_training(
-    #     martian_data,
-    #     labels=[0] * len(martian_data),
-    #     time_labels=[0] * len(martian_data),  # Placeholder labels
-    # )
-
-    # # Train model on martian data
-    # if martian_data_loader:
-    #     print("Self-training model on Martian data...")
-    #     model.train_on_martian_data(model, martian_data_loader, optimizer)
-    # else:
-    #     print(
-    #         "Error: Self-training skipped due to invalid DataLoader for Martian data."
-    #     )
-
-    # # Save the trained model
-    # print("Saving the trained model...")
-    # model.save_model()
+    # Initialize and train the model on lunar data
+    print("Initializing and training the model on lunar data...")
+    model = initialize_and_train_model(train_loader)
