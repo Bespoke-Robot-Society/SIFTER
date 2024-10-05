@@ -1,5 +1,5 @@
 # Base image
-FROM python:3.11-slim
+FROM python:3.9-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -11,10 +11,10 @@ WORKDIR /app
 # Install dependencies
 #COPY requirements.txt /app/
 COPY . /app/
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r server/requirements.txt
 
-# Expose the Flask app port
-EXPOSE 9123
+# Expose the Dash app port
+EXPOSE 8050 
 
-# Command to run the Flask app
-CMD ["python", "hook.py"]
+# Command to run the Dash app
+CMD ["python", "server/app.py"]
