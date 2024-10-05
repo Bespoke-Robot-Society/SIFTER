@@ -9,16 +9,17 @@ obspy==1.3.0  # For MiniSEED handling and seismic data analysis
 # Machine learning models
 scikit-learn==1.1.2  # For Random Forest, SVM, and Decision Trees
 xgboost==1.6.2  # Optional for gradient boosting classifier
-pytorch==1.12.1  # PyTorch instead of TensorFlow
+# pytorch==1.12.1  # PyTorch instead of TensorFlow
 
 # Data visualization
 matplotlib==3.6.2
 plotly==5.10.0
-dash==2.6.1  # Optional for Dash-based web applications
+dash==2.18.1
+dash_mantine_components=0.14.5
 
 # Model conversion
-onnx==1.18.0  # For converting models to ONNX format
-onnx2c # Optional for converting ONNX models to C code
+# onnx==1.18.0  # For converting models to ONNX format
+# onnx2c # Optional for converting ONNX models to C code
 
 # CI/CD and Testing
 pytest==7.2.0  # Unit testing framework

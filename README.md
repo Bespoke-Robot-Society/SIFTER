@@ -1,4 +1,3 @@
-
 # **S.I.F.T.E.R. — Seismic Investigation and Frequency Tracking for Extraterrestrial Research**
 
 ## Project Overview
@@ -81,6 +80,7 @@ SIFTER/
 
    ```bash
    pip install -r requirements.txt
+   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
    ```
 
 3. Install C++ dependencies and build the project:
@@ -133,7 +133,7 @@ The architecture consists of the following components:
 
 4. **Frontend Visualization**:
 
-   - Visualization of seismic data and classification results using tools like **Streamlit**, **Plotly**, or **Dash**.
+   - Visualization of seismic data and classification results using **Dash**.
 
 ---
 
@@ -142,7 +142,7 @@ The architecture consists of the following components:
 - **Data Preprocessing**:
 
   - Implements STA/LTA filtering and segmentation of seismic data.
-  
+
 - **Model Training**:
 
   - Models are trained in Python using **Random Forest**, **SVM**, and **Decision Trees**.
@@ -168,9 +168,7 @@ The final system is implemented in C++ for use on non-terrestrial seismometers, 
 
 A terrestrial front-end for real-time seismic data analysis and visualization:
 
-- **Streamlit** Dashboard: Provides an interactive UI for seismic event visualization.
-- **Plotly** Visualizations: Real-time waveform plotting and event timelines.
-- **Dash** (optional): Advanced data visualization in a web interface.
+- **Dash**: Advanced data visualization in a web interface.
 
 ---
 
@@ -204,6 +202,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ### **Updated Dependencies** (from `requirements.txt`)
 
+From Jason - commented out libraries were giving me trouble
+
 ```txt
 # Core Python libraries for data handling and scientific computing
 numpy==1.21.0
@@ -216,33 +216,35 @@ obspy==1.3.0  # For MiniSEED handling and seismic data analysis
 # Machine learning models
 scikit-learn==1.1.2  # For Random Forest, SVM, and Decision Trees
 xgboost==1.6.2  # Optional for gradient boosting classifier
-pytorch==1.12.1  # PyTorch for deep learning models
+# pytorch==1.12.1  # PyTorch instead of TensorFlow
 
 # Data visualization
 matplotlib==3.6.2
 plotly==5.10.0
-dash==2.6.1  # Optional for Dash-based web applications
+dash==2.18.1
+dash_mantine_components=0.14.5
 
-# Model conversion for C++ deployment
-onnx==1.18.0  # For converting models to ONNX format
-onnx2c  # Optional for converting ONNX models to C code
+# Model conversion
+# onnx==1.18.0  # For converting models to ONNX format
+# onnx2c # Optional for converting ONNX models to C code
 
-# CI/CD and testing
+# CI/CD and Testing
 pytest==7.2.0  # Unit testing framework
 black==22.10.0  # Code formatter for linting
 
 # Data version control (DVC)
 dvc==2.17.0  # Versioning for large seismic datasets
 
-# Jupyter notebook support
+# Jupyter notebook
 jupyterlab==3.5.0
 
-# Additional tools for streamlining data management
-pyyaml==6.0  # Configuration file handling
+# Additional tools for streamlining data download and management
+pyyaml==6.0  # Configuration files handling
 
-# Docker environment (optional for Docker builds)
+# Docker environment (Optional, for Docker builds)
 docker==5.0.3
 
 # For HTTP requests and API integration
 requests==2.28.1
+
 ```
