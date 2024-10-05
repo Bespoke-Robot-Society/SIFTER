@@ -15,7 +15,7 @@ xgboost==1.6.2  # Optional for gradient boosting classifier
 matplotlib==3.6.2
 plotly==5.10.0
 dash==2.18.1
-dash_mantine_components=0.14.5
+dash_mantine_components==0.14.5
 
 # Model conversion
 # onnx==1.18.0  # For converting models to ONNX format
