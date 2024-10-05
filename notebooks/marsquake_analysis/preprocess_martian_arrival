@@ -1,0 +1,87 @@
+from obspy.signal.trigger import classic_sta_lta, trigger_onset
+from obspy import read
+import matplotlib.pyplot as plt
+
+def apply_bandpass_filter(tr, freqmin=0.5, freqmax=3.0):
+    """
+    Apply a bandpass filter to a seismic trace.
+    
+    Parameters:
+    - tr: The seismic trace.
+    - freqmin: Minimum frequency of the bandpass filter.
+    - freqmax: Maximum frequency of the bandpass filter.
+    
+    Returns:
+    - tr_filt: Filtered trace.
+    """
+    tr_filt = tr.copy()
+    tr_filt.filter('bandpass', freqmin=freqmin, freqmax=freqmax)
+    return tr_filt
+
+def detect_arrival_time(tr, sta_len=1, lta_len=10, thr_on=4, thr_off=1.5):
+    """
+    Detect arrival time using the STA/LTA method.
+    
+    Parameters:
+    - tr: The seismic trace.
+    - sta_len: Short-term window length in seconds.
+    - lta_len: Long-term window length in seconds.
+    - thr_on: The STA/LTA threshold to trigger the onset.
+    - thr_off: The STA/LTA threshold to trigger the offset.
+    
+    Returns:
+    - arrival_time (float): The arrival time in seconds.
+    """
+    # Sampling frequency of the trace
+    df = tr.stats.sampling_rate
+    
+    # STA/LTA characteristic function
+    cft = classic_sta_lta(tr.data, int(sta_len * df), int(lta_len * df))
+    
+    # Detect triggers (onset and offset)
+    on_off = trigger_onset(cft, thr_on, thr_off)
+    
+    if len(on_off) > 0:
+        # Return the first detected onset as the arrival time
+        arrival_time = tr.times()[on_off[0][0]]
+        return arrival_time
+    else:
+        # If no triggers are detected, return None
+        return None
+
+def plot_seismic_trace_and_detect_arrival(mseed_file):
+    """
+    Plot seismic trace from MSEED file and detect the arrival time using STA/LTA.
+    
+    Parameters:
+    - mseed_file: Path to the seismic data MSEED file.
+    """
+    # Read the MSEED file
+    st = read(mseed_file)
+    tr = st[0]
+    
+    # Step 1: Apply bandpass filter
+    tr_filt = apply_bandpass_filter(tr, freqmin=0.5, freqmax=3.0)
+    
+    # Step 2: Detect arrival time using STA/LTA
+    arrival_time = detect_arrival_time(tr_filt)
+    
+    # Plot the seismic trace
+    tr_times = tr.times()
+    tr_data = tr.data
+    
+    plt.figure(figsize=(10, 6))
+    plt.plot(tr_times, tr_data, label=f'Seismic Trace from {os.path.basename(mseed_file)}')
+    
+    if arrival_time is not None:
+        # Mark the detected arrival time
+        plt.axvline(arrival_time, color='red', linestyle='--', label='Detected Arrival')
+    
+    plt.xlabel('Time (s)')
+    plt.ylabel('Amplitude')
+    plt.title(f'Seismic Trace from {os.path.basename(mseed_file)}')
+    plt.legend()
+    plt.show()
+
+# Example usage for plotting and detecting arrival times in the data directory
+plot_seismic_trace_and_detect_arrival('path_to_your_mseed_file.mseed')
