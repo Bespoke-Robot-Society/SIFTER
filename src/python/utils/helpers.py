@@ -2,18 +2,17 @@ from datetime import datetime, timedelta
 from scipy import signal
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
+from obspy import read
+import matplotlib.pyplot as plt
 import os
 
 
-def flatten_image_list(image_list):
-    """
-    Ensure image list is flat in case there are nested lists of image paths.
-    """
-    if isinstance(image_list, (list, tuple)) and any(
-        isinstance(i, (list, tuple)) for i in image_list
-    ):
-        return [item for sublist in image_list for item in sublist]
-    return image_list
+# Apply bandpass filter to seismic trace
+def apply_bandpass_filter(trace, sampling_rate, freqmin=0.5, freqmax=3.0):
+    sos = signal.butter(
+        4, [freqmin, freqmax], btype="bandpass", fs=sampling_rate, output="sos"
+    )
+    return signal.sosfilt(sos, trace)
 
 
 def convert_rel_to_abs_time(start_time, time_rel):
@@ -23,14 +22,6 @@ def convert_rel_to_abs_time(start_time, time_rel):
     return (start_time + timedelta(seconds=float(time_rel))).strftime(
         "%Y-%m-%dT%H:%M:%S.%f"
     )
-
-
-# Apply bandpass filter to seismic trace
-def apply_bandpass_filter(trace, sampling_rate, freqmin=0.5, freqmax=3.0):
-    sos = signal.butter(
-        4, [freqmin, freqmax], btype="bandpass", fs=sampling_rate, output="sos"
-    )
-    return signal.sosfilt(sos, trace)
 
 
 def encode_labels_and_convert_time(lunar_labels, lunar_arrival_times):
@@ -49,8 +40,12 @@ def encode_labels_and_convert_time(lunar_labels, lunar_arrival_times):
     return lunar_labels_encoded, lunar_arrival_times_numeric
 
 
-def load_lunar_catalog(lunar_catalog_path):
-    """Load luner catalog of images"""
-    print(f"Loading lunar catalog from: {lunar_catalog_path}")
-    lunar_catalog = pd.read_csv(lunar_catalog_path)
-    return lunar_catalog
+def flatten_image_list(image_list):
+    """
+    Ensure image list is flat in case there are nested lists of image paths.
+    """
+    if isinstance(image_list, (list, tuple)) and any(
+        isinstance(i, (list, tuple)) for i in image_list
+    ):
+        return [item for sublist in image_list for item in sublist]
+    return image_list

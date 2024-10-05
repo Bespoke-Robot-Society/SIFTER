@@ -19,74 +19,7 @@ def load_existing_images(image_dir):
     return image_files
 
 
-def preprocess_lunar_data(lunar_data_directory):
-    """
-    Skip generating images and directly load pre-generated lunar images.
-    """
-    print(f"Loading pre-generated lunar images from {lunar_data_directory}...")
-    lunar_images = load_existing_images(lunar_data_directory)
-    print(f"{len(lunar_images)} lunar images loaded.")
-    return lunar_images
-
-
-def preprocess_martian_data(martian_data_directory):
-    """
-    Skip generating images and directly load pre-generated Martian images.
-    """
-    print(f"Loading pre-generated Martian images from {martian_data_directory}...")
-    martian_images = load_existing_images(martian_data_directory)
-    print(f"{len(martian_images)} Martian images loaded.")
-    return martian_images
-
-
-def preprocess_and_validate_lunar_data(
-    lunar_catalog, lunar_data_directory, save_dir, combine_images=True
-):
-    print("Preprocessing lunar data...")
-    lunar_data, lunar_labels, lunar_arrival_times = preprocess_lunar_data(
-        lunar_catalog, lunar_data_directory, save_dir, combine_images
-    )
-
-    print(
-        f"Lunar Data: {len(lunar_data)} images, Labels: {len(lunar_labels)}, Arrival Times: {len(lunar_arrival_times)}"
-    )
-
-    if len(lunar_data) > 0:
-        for i in range(min(5, len(lunar_data))):
-            img_path = lunar_data[i]
-            if os.path.exists(img_path) and img_path.endswith(".png"):
-                print(f"Valid image path: {img_path}")
-            else:
-                print(f"Invalid image path or file does not exist: {img_path}")
-    else:
-        print("Error: No lunar image data found.")
-
-    return lunar_data, lunar_labels, lunar_arrival_times
-
-
-def preprocess_and_validate_martian_data(
-    martian_data_directory, save_dir, combine_images=True
-):
-    print("Preprocessing Martian data (no labels)...")
-    martian_data = preprocess_martian_data(
-        martian_data_directory, save_dir, combine_images
-    )
-
-    if len(martian_data) > 0:
-        print(f"Martian Data: {len(martian_data)} files found.")
-        for i in range(min(5, len(martian_data))):
-            img_path = martian_data[i]
-            if os.path.exists(img_path) and img_path.endswith(".png"):
-                print(f"Valid Martian image path: {img_path}")
-            else:
-                print(f"Invalid Martian image path or file does not exist: {img_path}")
-    else:
-        print("Error: No Martian data found.")
-
-    return martian_data
-
-
-def prepare_martian_data_for_self_training(martian_data):
+def git(martian_data):
     print("Preparing DataLoader for Martian data (self-training)...")
     martian_data_loader = prepare_data_for_training(
         martian_data,

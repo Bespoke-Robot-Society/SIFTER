@@ -5,45 +5,6 @@ import matplotlib.pyplot as plt
 import json
 
 
-def self_train_on_martian_data(
-    model,
-    martian_data_loader,
-    optimizer,
-    criterion_event,
-    criterion_time,
-    num_epochs=10,
-):
-    model.train()
-    for epoch in range(num_epochs):
-        running_loss = 0.0
-        for batch in martian_data_loader:
-            images = batch[0]  # Unpack the images from the batch tuple
-            optimizer.zero_grad()
-
-            # Forward pass through the model
-            event_output, time_output = model(images)
-
-            # Generate pseudo-labels (predicted event labels)
-            _, pseudo_labels = torch.max(event_output, 1)
-
-            # Compute loss using pseudo-labels
-            loss_event = criterion_event(event_output, pseudo_labels)
-            loss_time = criterion_time(
-                time_output.squeeze(), torch.zeros_like(time_output.squeeze())
-            )  # Placeholder time labels
-
-            # Calculate total loss and perform backpropagation
-            total_loss = loss_event + loss_time
-            total_loss.backward()
-            optimizer.step()
-
-            running_loss += total_loss.item()
-
-        print(
-            f"Self-training Epoch {epoch+1}, Loss: {running_loss/len(martian_data_loader)}"
-        )
-
-
 class SpectrogramCNN(nn.Module):
     """
     A CNN model identifying features from images of spectrograms

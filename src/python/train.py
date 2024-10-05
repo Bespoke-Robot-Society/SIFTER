@@ -7,15 +7,9 @@ from config import (
     LUNAR_CATALOG_PATH,
     MARTIAN_DATA_DIR,
     LUNAR_DATA_DIR,
-    SAVE_DIR,
 )
-from utils.helpers import load_lunar_catalog, encode_labels_and_convert_time
-from utils.preprocessing import (
-    preprocess_and_validate_lunar_data,
-    preprocess_and_validate_martian_data,
-    prepare_lunar_data_for_training,
-    prepare_data_for_training,
-)
+from utils.helpers import encode_labels_and_convert_time
+from utils.image_processor import ImageProcessor
 from model.cnn_spectrogram import SpectrogramCNN
 
 
@@ -23,22 +17,20 @@ def train_and_save_model():
     """
     Train and save the CNN model
     """
-    # Load the lunar catalog
-    print("Loading lunar catalog...")
-    lunar_catalog = load_lunar_catalog(LUNAR_CATALOG_PATH)
-    print(lunar_catalog)
+    # Process and validate date
+    imageProcessor = ImageProcessor()
+    lunar_data, lunar_labels, lunar_arrival_times = (
+        imageProcessor.preprocess_and_validate_lunar_data()
+    )
+    martian_data, martian_arrival_times = (
+        imageProcessor.preprocess_and_validate_martian_data()
+    )
 
-    # # Preprocess and validate lunar data
-    # print("Preprocessing and validating lunar data...")
-    # lunar_data, lunar_labels, lunar_arrival_times = preprocess_and_validate_lunar_data(
-    #     lunar_catalog, LUNAR_DATA_DIR, SAVE_DIR, combine_images=True
-    # )
-
-    # # Encode labels and convert arrival times to numeric values
-    # print("Encoding labels and converting arrival times...")
-    # lunar_labels_encoded, lunar_arrival_times_numeric = encode_labels_and_convert_time(
-    #     lunar_labels, lunar_arrival_times
-    # )
+    # Encode labels and convert arrival times to numeric values
+    print("Encoding labels and converting arrival times...")
+    lunar_labels_encoded, lunar_arrival_times_numeric = encode_labels_and_convert_time(
+        lunar_labels, lunar_arrival_times
+    )
 
     # # Prepare DataLoader for lunar data training
     # print("Preparing DataLoader for lunar training and validation sets...")
