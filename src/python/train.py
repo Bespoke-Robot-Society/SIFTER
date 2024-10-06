@@ -111,3 +111,5 @@ def train_and_save_model():
         )
     else:
         print("Error: Training skipped due to invalid Martian DataLoader.")
+
+    model.save_model()

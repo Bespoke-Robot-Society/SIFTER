@@ -3,6 +3,7 @@ import torch.nn as nn
 from sklearn.metrics import accuracy_score, mean_absolute_error, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 import json
+from config import MODEL_OUTPUT_DIR
 
 
 class SpectrogramCNN(nn.Module):
@@ -135,6 +136,7 @@ class SpectrogramCNN(nn.Module):
 
     # Model Save Function
     def save_model(self, model_name="seismic_cnn_model"):
+        # Save model architecture (convolutional and fully connected layers) as JSON
         model_architecture = {
             "conv_layers": [
                 {
@@ -159,8 +161,16 @@ class SpectrogramCNN(nn.Module):
                 },
             ],
         }
-        with open(f"{model_name}_architecture.json", "w") as f:
+        with open(f"{MODEL_OUTPUT_DIR}/{model_name}_architecture.json", "w") as f:
             json.dump(model_architecture, f, indent=4)
-        torch.save(self.state_dict(), f"{model_name}_weights.pth")
-        torch.save(self, f"{model_name}_full.pth")
-        print(f"Model saved to {model_name}_full.pth")
+        print(
+            f"Model architecture saved to {MODEL_OUTPUT_DIR}/{model_name}_architecture.json"
+        )
+
+        # Save model weights
+        torch.save(self.state_dict(), f"{MODEL_OUTPUT_DIR}/{model_name}_weights.pth")
+        print(f"Model weights saved to {MODEL_OUTPUT_DIR}/{model_name}_weights.pth")
+
+        # Save the full model
+        torch.save(self, f"{MODEL_OUTPUT_DIR}/{model_name}_full.pth")
+        print(f"Full model saved to {MODEL_OUTPUT_DIR}/{model_name}_full.pth")
