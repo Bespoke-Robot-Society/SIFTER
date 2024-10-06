@@ -67,7 +67,7 @@ layout = html.Div(
     dbc.Container(
         [
         dcc.Graph(id='matplotlib-graph'),
-        html.P("Testing to see how this looks on the page!")
+        html.P("THIS SHOULD UPDATE BASED ON VISUALIZATION CHOSEN BY USER", id='dynamic-text')  # Added ID here
         ],
         style={
         'display': 'flex',        # Align items in a row
@@ -80,14 +80,17 @@ layout = html.Div(
     ],
     style=styles,
 )
-# Callback to update graph1
+# Callback to update graph and text
 @callback(
-    Output('matplotlib-graph', 'figure'),
+    [Output('matplotlib-graph', 'figure'),
+     Output('dynamic-text', 'children')],  # Added Output for 'dynamic-text'
     [Input('graph-dropdown', 'value')]
 )
 def update_graph(value):
     if value == 'option1':
         plotly_fig = simple_plotly_fig1
+        text = "This is the text for option 1"  # Text for option1
     else:
         plotly_fig = simple_plotly_fig2
-    return plotly_fig
+        text = "This is the text for option 2"  # Text for option2
+    return plotly_fig, text  # Return both figure and text
