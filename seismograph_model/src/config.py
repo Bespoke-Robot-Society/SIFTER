@@ -5,6 +5,7 @@ LUNAR_SAVE_DIR = "model_output/lunar_preprocessed_images/"
 MARTIAN_DATA_DIR = "data/mars/training/data/"
 MARTIAN_SAVE_DIR = "model_output/martian_preprocessed_images/"
 MODEL_FILENAME = "seismic_cnn_model.pth"
+MODEL_DICT_FILENAME = "seismic_cnn_model_dict.pth"
 ONNX_MODEL_PATH = "model_output/martian_seismic_cnn_model.onnx"
 SAVE_DIR = "model_output"
 TEST_DATA_DIRS = [
@@ -15,3 +16,4 @@ TEST_DATA_DIRS = [
     "data/lunar/test/data/S16_GradeA",
     "data/lunar/test/data/S16_GradeB",
 ]
+CATALOG_PNG_DIR = "model_output/catalog_png"

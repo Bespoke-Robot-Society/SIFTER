@@ -19,6 +19,7 @@ from config import (
     MARTIAN_SAVE_DIR,
     SAVE_DIR,
     MODEL_FILENAME,
+    MODEL_DICT_FILENAME,
     ONNX_MODEL_PATH,
 )
 
@@ -120,8 +121,8 @@ def main():
     lunar_trainer.evaluate(lunar_test_loader)
 
     # Save the trained model
-    model_path = f"{SAVE_DIR}/{MODEL_FILENAME}_full.pth"
-    model_path_dict = f"{SAVE_DIR}/{MODEL_FILENAME}_dict.pth"
+    model_path = f"{SAVE_DIR}/{MODEL_FILENAME}"
+    model_path_dict = f"{SAVE_DIR}/{MODEL_DICT_FILENAME}"
     lunar_trainer.save_cnn_model(model_path)
     lunar_trainer.save_cnn_model_state_dict(model_path_dict)
 

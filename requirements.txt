@@ -40,3 +40,4 @@ docker==5.0.3
 
 # For HTTP requests and API integration
 requests==2.28.1
+wheel==0.44.0
