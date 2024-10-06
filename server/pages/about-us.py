@@ -39,7 +39,7 @@ def bio_text(fn):
         return f.read()
 
 aaron_profile = Profile("Aaron W. Storey", bio_text("assets/aaron.txt"), "/assets/AaronPhoto.JPG")
-andy_profile = Profile("Andy Ponce", description_placeholder, "assets/AndyPhoto.JPG")
+andy_profile = Profile("Andy Ponce", bio_text("assets/andy.txt"), "assets/AndyPhoto.JPG")
 john_profile = Profile("John P. McCardle III", bio_text("assets/john.txt"), "/assets/JohnPhoto.JPG")
 #jason_profile
 #lee_profile
