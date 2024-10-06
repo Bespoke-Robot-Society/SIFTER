@@ -3,6 +3,7 @@ import torch.nn as nn
 from sklearn.metrics import accuracy_score, mean_absolute_error, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 import json
+from config import MODEL_OUTPUT_DIR
 
 
 class SpectrogramCNN(nn.Module):
@@ -61,7 +62,6 @@ class SpectrogramCNN(nn.Module):
     ):
         """Training on a unlabeled martian dataset"""
         self.train()  # Set the model to training mode
-        print(len(martian_data_loader.dataset))
         for epoch in range(num_epochs):  # Loop over epochs
             running_loss = 0.0  # Track loss for current epoch
             for batch in martian_data_loader:
@@ -93,25 +93,49 @@ class SpectrogramCNN(nn.Module):
 
     # Model Evaluation
     def evaluate_model(self, data_loader):
-        self.eval()
-        event_preds, time_preds, event_true, time_true = [], [], [], []
+        self.eval()  # Set the model to evaluation mode
+        event_preds, time_preds, event_true, time_true = (
+            [],
+            [],
+            [],
+            [],
+        )  # Lists to hold predictions and ground truth
+
+        # No need to track gradients during evaluation
         with torch.no_grad():
-            for images, event_labels, time_labels in data_loader:
-                event_output, time_output = self(images)
+            for (
+                images,
+                event_labels,
+                time_labels,
+            ) in data_loader:  # Loop over the validation data
+                event_output, time_output = self.forward(
+                    images
+                )  # Forward pass to get outputs
+
+                # Get the predicted event classes and append to lists
                 _, event_pred_classes = torch.max(event_output, 1)
-                event_preds.extend(event_pred_classes.cpu().numpy())
-                time_preds.extend(time_output.cpu().numpy())
-                event_true.extend(event_labels.cpu().numpy())
-                time_true.extend(time_labels.cpu().numpy())
+                event_preds.extend(
+                    event_pred_classes.cpu().numpy()
+                )  # Convert to numpy for easy manipulation
+                time_preds.extend(time_output.cpu().numpy())  # Store predicted times
+                event_true.extend(event_labels.cpu().numpy())  # Store true event labels
+                time_true.extend(time_labels.cpu().numpy())  # Store true times
+
+        # Calculate accuracy and mean absolute error (MAE) for event prediction and time prediction
         event_accuracy = accuracy_score(event_true, event_preds)
         time_mae = mean_absolute_error(time_true, time_preds)
+
+        # Print evaluation results
         print(f"Validation Event Accuracy: {event_accuracy:.4f}")
         print(f"Validation Time MAE: {time_mae:.4f}")
+
+        # Plot confusion matrix for event classification
         ConfusionMatrixDisplay.from_predictions(event_true, event_preds)
         plt.show()
 
     # Model Save Function
     def save_model(self, model_name="seismic_cnn_model"):
+        # Save model architecture (convolutional and fully connected layers) as JSON
         model_architecture = {
             "conv_layers": [
                 {
@@ -136,8 +160,16 @@ class SpectrogramCNN(nn.Module):
                 },
             ],
         }
-        with open(f"{model_name}_architecture.json", "w") as f:
+        with open(f"{MODEL_OUTPUT_DIR}/{model_name}_architecture.json", "w") as f:
             json.dump(model_architecture, f, indent=4)
-        torch.save(self.state_dict(), f"{model_name}_weights.pth")
-        torch.save(self, f"{model_name}_full.pth")
-        print(f"Model saved to {model_name}_full.pth")
+        print(
+            f"Model architecture saved to {MODEL_OUTPUT_DIR}/{model_name}_architecture.json"
+        )
+
+        # Save model weights
+        torch.save(self.state_dict(), f"{MODEL_OUTPUT_DIR}/{model_name}_weights.pth")
+        print(f"Model weights saved to {MODEL_OUTPUT_DIR}/{model_name}_weights.pth")
+
+        # Save the full model
+        torch.save(self, f"{MODEL_OUTPUT_DIR}/{model_name}_full.pth")
+        print(f"Full model saved to {MODEL_OUTPUT_DIR}/{model_name}_full.pth")
