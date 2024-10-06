@@ -6,7 +6,7 @@ from config import (
     MARTIAN_DATA_DIR,
     LUNAR_DATA_DIR,
     LUNAR_DATA_IMAGES_DIR,
-    MARTIAL_DATA_IMAGES_DIR,
+    MARTIAN_DATA_IMAGES_DIR,
 )
 
 
@@ -61,8 +61,8 @@ class ImageProcessor:
         return lunar_data
 
     def get_spectrogram_images_mars(self, combine_images=True):
-        if not os.path.exists(MARTIAL_DATA_IMAGES_DIR):
-            os.makedirs(MARTIAL_DATA_IMAGES_DIR)
+        if not os.path.exists(MARTIAN_DATA_IMAGES_DIR):
+            os.makedirs(MARTIAN_DATA_IMAGES_DIR)
 
         martian_images = []
 
@@ -102,7 +102,7 @@ class ImageProcessor:
                 spectrogram = Spectrogram(
                     file_path,
                     arrival_time_rel,
-                    MARTIAL_DATA_IMAGES_DIR,
+                    MARTIAN_DATA_IMAGES_DIR,
                     filename,
                     combine_images,
                 )
