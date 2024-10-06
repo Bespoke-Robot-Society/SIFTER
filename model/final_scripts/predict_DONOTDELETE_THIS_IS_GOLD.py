@@ -7,15 +7,6 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import numpy as np
 
-from config import (
-    SAVE_DIR,
-    MODEL_FILENAME,
-    TEST_DATA_DIRS,
-)
-
-
-
-
 class STA_LTA_Processor:
     def __init__(self, sampling_rate=6.625):
         self.sampling_rate = sampling_rate  # Default from the notebook's miniseed file info
@@ -157,20 +148,30 @@ class Predictor:
         output_csv = os.path.join(self.save_dir, 'predictions_catalog.csv')
         results_df.to_csv(output_csv, index=False)
         print(f"Predicted arrival times saved to {output_csv}")
-        
+
 # Main execution
 if __name__ == "__main__":
-    # Model path
-    cnn_model_path = f"{SAVE_DIR}/{MODEL_FILENAME}_full.pth"
-
-    # Device management (use GPU if available)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    # Load the pretrained model and move it to the appropriate device
-    cnn_model = torch.load(model_path, map_location=device)
-    cnn_model.eval()
+    # Define the path to the trained model
+    cnn_model_path = 'martian_seismic_cnn_model_full.pth'
     
+    # Define test directories
+    test_data_dirs = [
+        'data/mars/test',               # Martian test data
+        'data/lunar/test/data/S12_GradeB',  # Lunar test set 1
+        'data/lunar/test/data/S15_GradeA',  # Lunar test set 2
+        'data/lunar/test/data/S15_GradeB',  # Lunar test set 3
+        'data/lunar/test/data/S16_GradeA',  # Lunar test set 4
+        'data/lunar/test/data/S16_GradeB'   # Lunar test set 5
+    ]
+
+    # Directory to save results
+    save_dir = 'model/model_output'
+    
+    # Directory to save .png plots
+    catalog_png_dir = 'model/catalog_png'
+
     # Instantiate the Predictor class with the model path and save directories
     predictor = Predictor(cnn_model_path=cnn_model_path, save_dir=save_dir, catalog_png_dir=catalog_png_dir, batch_size=32)
-    # Iterate over the test data directories and predict arrival times
-    predictor.process_and_predict(cnn_model, TEST_DATA_DIRS, SAVE_DIR, device)
+    
+    # Run the prediction process on the defined test data directories
+    predictor.process_and_predict(test_data_dirs=test_data_dirs)
