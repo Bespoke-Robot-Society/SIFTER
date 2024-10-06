@@ -112,4 +112,8 @@ def train_and_save_model():
     else:
         print("Error: Training skipped due to invalid Martian DataLoader.")
 
+    # evaluate model
+    model.evaluate_model(lunar_val_loader)
+
+    # save model
     model.save_model()
