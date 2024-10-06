@@ -11,7 +11,6 @@ from cnn.cnn_model import SpectrogramArrivalCNN
 from preprocessing.imagehandler import ImageHandler
 from cnn.model_trainer import ModelTrainer
 from preprocessing.dataloader import DataLoaderHandler
-from cnn.model_tester import ModelTester
 from config import (
     LUNAR_CATALOG_PATH,
     LUNAR_DATA_DIR,
