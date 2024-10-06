@@ -35,7 +35,7 @@ class Profile:
         self.image_width = image_width
         self.image_height = image_height
         self.profile = \
-                dbc.Row(
+            dbc.Row(
             [
                 dbc.Col(
                     html.Img(
@@ -48,12 +48,9 @@ class Profile:
                     className="text-center"
                 ),
                 dbc.Col(
-                    [
-                        html.H3(self.name),
-                        html.P(self.description),
-                    ],
-                    width=7
-                ),
+                [html.H3(self.name)] + [html.P(txt) for txt in self.description.split('\n\n')],
+                width=7
+            )
             ],
             className="mt-4"
         )
