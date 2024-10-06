@@ -12,41 +12,21 @@ class SpectrogramCNN(nn.Module):
 
     def __init__(self):
         super(SpectrogramCNN, self).__init__()
-        # CNN layers for spectrogram feature extraction
-        self.conv1 = nn.Conv2d(
-            1, 32, kernel_size=3, stride=1, padding=1
-        )  # For grayscale spectrograms
+        self.conv1 = nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1)
         self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
         self.pool = nn.MaxPool2d(2, 2)
-
-        # Add a placeholder for the fully connected input size
-        self.fc_input_size = None  # To be calculated dynamically
-
-        # Define fully connected layers (we'll initialize them later)
-        self.fc1 = None
-        self.fc_event = nn.Linear(128, 3)  # For event classification (3 classes)
-        self.fc_time = nn.Linear(128, 1)  # For arrival time prediction
+        self.fc1 = nn.Linear(64 * 112 * 112, 128)  # edit to None if it doesn't work
+        self.fc_event = nn.Linear(128, 3)
+        self.fc_time = nn.Linear(128, 1)
 
     def forward(self, x):
-        """Forward propogation"""
         x = torch.relu(self.conv1(x))
         x = self.pool(torch.relu(self.conv2(x)))
-
-        # Flatten the tensor
         x = x.view(x.size(0), -1)
-
-        # Initialize fully connected layers dynamically if not already initialized
         if self.fc1 is None:
-            self.fc_input_size = x.size(1)
-            self.fc1 = nn.Linear(self.fc_input_size, 128)
-
+            self.fc1 = nn.Linear(x.size(1), 128)
         x = torch.relu(self.fc1(x))
-
-        # Separate heads for classification and regression
-        event_output = self.fc_event(x)  # Output for event classification
-        time_output = self.fc_time(x)  # Output for arrival time prediction
-
-        return event_output, time_output
+        return self.fc_event(x), self.fc_time(x)
 
     def train_on_lunar_data(
         self,
@@ -74,33 +54,37 @@ class SpectrogramCNN(nn.Module):
     def train_on_martian_data(
         self,
         martian_data_loader,
+        criterion_event,
+        criterion_time,
         optimizer,
         num_epochs=10,
     ):
         """Training on a unlabeled martian dataset"""
-        self.train()
-        for epoch in range(num_epochs):
-            running_loss = 0.0
-            for inputs in martian_data_loader:
-                optimizer.zero_grad()
+        self.train()  # Set the model to training mode
+        for epoch in range(num_epochs):  # Loop over epochs
+            running_loss = 0.0  # Track loss for current epoch
+            for batch in martian_data_loader:
+                images = batch[0]  # Extract image data from the batch
+                optimizer.zero_grad()  # Zero the gradients
 
-                # Forward pass through the model (get pseudo-labels)
-                event_output, time_output = self.forward(inputs)
+                # Forward pass through the model to get predictions
+                event_output, time_output = self.forward(images)
+
+                # Generate pseudo-labels: assign the highest predicted class as the label
                 _, pseudo_labels = torch.max(event_output, 1)
 
-                # For now, we do not have ground truth for martian data, so we only optimize on pseudo-labels
-                loss_event = nn.CrossEntropyLoss()(event_output, pseudo_labels)
-                loss_time = nn.MSELoss()(
-                    time_output, torch.zeros_like(time_output)
-                )  # Zero as placeholder
+                # Calculate losses using pseudo-labels for events and zero as placeholder for time
+                loss_event = criterion_event(event_output, pseudo_labels)
+                loss_time = criterion_time(
+                    time_output.squeeze(), torch.zeros_like(time_output.squeeze())
+                )
 
-                loss = loss_event + loss_time
-                loss.backward()
-                optimizer.step()
-                running_loss += loss.item()
-            print(
-                f"Self-training Epoch {epoch+1}, Loss: {running_loss / len(martian_data_loader)}"
-            )
+                # Calculate the total loss and perform backpropagation
+                total_loss = loss_event + loss_time
+                total_loss.backward()  # Backpropagate the gradients
+                optimizer.step()  # Update model parameters
+
+                running_loss += total_loss.item()  # Accumulate the running loss
 
     # Model Evaluation
     def evaluate_model(self, data_loader):

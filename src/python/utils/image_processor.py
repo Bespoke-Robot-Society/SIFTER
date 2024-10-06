@@ -21,7 +21,7 @@ class ImageProcessor:
         if not os.path.exists(LUNAR_DATA_IMAGES_DIR):
             os.makedirs(LUNAR_DATA_IMAGES_DIR)
 
-        lunar_data, lunar_labels, lunar_arrival_times = [], [], []
+        lunar_data = []
 
         print(f"Processing Lunar Data: {len(self.lunar_catalog)} records found.")
 
@@ -43,7 +43,7 @@ class ImageProcessor:
                 spectrogram = Spectrogram(
                     file_path,
                     arrival_time_rel,
-                    LUNAR_DATA_IMAGES_DIR,
+                    LUNAR_DATA_DIR,
                     filename,
                     combine_images,
                 )
@@ -54,28 +54,24 @@ class ImageProcessor:
                     spectrogram_image_path
                 )  # This should now contain the path to the saved image
 
-                # Append labels and times for further training
-                lunar_labels.append(row["mq_type"])
-                lunar_arrival_times.append(arrival_time_abs)
             else:
                 print(f"File {filename} not found.")
 
         # Ensure that lunar_data contains paths to saved images
-        return lunar_data, lunar_labels, lunar_arrival_times
+        return lunar_data
 
     def get_spectrogram_images_mars(self, combine_images=True):
         if not os.path.exists(MARTIAL_DATA_IMAGES_DIR):
             os.makedirs(MARTIAL_DATA_IMAGES_DIR)
 
         martian_images = []
-        martian_arrival_times = []
 
         # List all .mseed files in the data directory
         mseed_files = [f for f in os.listdir(MARTIAN_DATA_DIR) if f.endswith(".mseed")]
 
         if len(mseed_files) == 0:
             print("No .mseed files found in the directory.")
-            return martian_images, martian_arrival_times
+            return martian_images
 
         # Iterate over each .mseed file
         for filename in mseed_files:
@@ -112,20 +108,13 @@ class ImageProcessor:
                 )
                 image_path = spectrogram.get_spectrogram()
                 martian_images.append(image_path)
-                martian_arrival_times.append(arrival_time_rel)
             except Exception as e:
                 print(f"Error processing {file_path}: {e}")
-        return martian_images, martian_arrival_times
+        return martian_images
 
     def preprocess_and_validate_lunar_data(self, combine_images=True):
         print("Preprocessing lunar data...")
-        lunar_data, lunar_labels, lunar_arrival_times = (
-            self.get_spectrogram_images_lunar(combine_images)
-        )
-
-        print(
-            f"Lunar Data: {len(lunar_data)} images, Labels: {len(lunar_labels)}, Arrival Times: {len(lunar_arrival_times)}"
-        )
+        lunar_data = self.get_spectrogram_images_lunar(combine_images)
 
         if len(lunar_data) > 0:
             for i in range(min(5, len(lunar_data))):
@@ -137,13 +126,11 @@ class ImageProcessor:
         else:
             print("Error: No lunar image data found.")
 
-        return lunar_data, lunar_labels, lunar_arrival_times
+        return lunar_data
 
     def preprocess_and_validate_martian_data(self, combine_images=True):
         print("Preprocessing Martian data (no labels)...")
-        martian_data, martial_arrival_times = self.get_spectrogram_images_mars(
-            combine_images
-        )
+        martian_data = self.get_spectrogram_images_mars(combine_images)
         if len(martian_data) > 0:
             print(f"Martian Data: {len(martian_data)} files found.")
             for i in range(min(5, len(martian_data))):
@@ -157,4 +144,4 @@ class ImageProcessor:
         else:
             print("Error: No Martian data found.")
 
-        return martian_data, martial_arrival_times
+        return martian_data

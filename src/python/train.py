@@ -51,7 +51,7 @@ def prepare_martian_data_for_training(martian_data, martian_arrival_times):
     training_spectrogram_data_loader = SpectrogramDataLoader(
         martian_data,
         labels=[0] * len(martian_data),
-        time_labels=martian_arrival_times,
+        time_labels=[0] * len(martian_data),
     )  # Placeholder labels
     train_loader = training_spectrogram_data_loader.get_unlabeled_data_loader()
 
@@ -70,28 +70,19 @@ def train_and_save_model():
     Train and save the CNN model
     """
     # Process and validate date
-    print("Preprocessing and validating Lunar data...")
     imageProcessor = ImageProcessor()
-    lunar_data, lunar_labels, lunar_arrival_times = (
-        imageProcessor.preprocess_and_validate_lunar_data()
-    )
-    # Encode labels and convert arrival times to numeric values
-    print("Encoding labels and converting arrival times...")
-    lunar_labels_encoded, lunar_arrival_times_numeric = encode_labels_and_convert_time(
-        lunar_labels, lunar_arrival_times
-    )
+    print("Preprocessing and validating Lunar data...")
+    lunar_data = imageProcessor.preprocess_and_validate_lunar_data()
     print("Preprocessing and validating Martian data...")
-    martian_data, martian_arrival_times = (
-        imageProcessor.preprocess_and_validate_martian_data()
-    )
+    martian_data = imageProcessor.preprocess_and_validate_martian_data()
 
     # Prepare DataLoader for training
+    lunar_labels_encoded = [0] * len(lunar_data)  # Placeholder labels
+    lunar_arrival_times_numeric = [0] * len(lunar_data)  # Placeholder arrival times
     lunar_train_loader, lunar_val_loader = prepare_lunar_data_for_training(
         lunar_data, lunar_labels_encoded, lunar_arrival_times_numeric
     )
-    martian_train_loader = prepare_martian_data_for_training(
-        martian_data, martian_arrival_times
-    )
+    martian_train_loader = prepare_martian_data_for_training(martian_data)
 
     print("Initializing SpectrogramCNN model...")
     model = SpectrogramCNN()
@@ -109,6 +100,8 @@ def train_and_save_model():
 
     if martian_train_loader:
         print("Training model on martian data...")
-        model.train_on_martian_data(martian_train_loader, optimizer)
+        model.train_on_martian_data(
+            martian_train_loader, criterion_event, criterion_time, optimizer
+        )
     else:
         print("Error: Training skipped due to invalid Martian DataLoader.")
