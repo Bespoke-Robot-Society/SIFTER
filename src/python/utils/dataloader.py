@@ -38,3 +38,23 @@ class SpectrogramDataLoader:
             return DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
 
         return None
+
+    def get_unlabeled_data_loader(self):
+        transform = transforms.Compose(
+            [
+                transforms.Grayscale(num_output_channels=1),
+                transforms.Resize((224, 224)),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.5], std=[0.5]),
+            ]
+        )
+        image_tensors = [
+            transform(Image.open(img))
+            for img in self.image_files
+            if os.path.exists(img) and img.endswith(".png")
+        ]
+        if image_tensors:
+            X_tensor = torch.stack(image_tensors)
+            dataset = TensorDataset(X_tensor)
+            return DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
+        return None

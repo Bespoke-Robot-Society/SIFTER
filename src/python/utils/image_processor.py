@@ -115,7 +115,6 @@ class ImageProcessor:
                 martian_arrival_times.append(arrival_time_rel)
             except Exception as e:
                 print(f"Error processing {file_path}: {e}")
-
         return martian_images, martian_arrival_times
 
     def preprocess_and_validate_lunar_data(self, combine_images=True):
