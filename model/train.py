@@ -17,6 +17,9 @@ from config import (
     LUNAR_SAVE_DIR,
     MARTIAN_DATA_DIR,
     MARTIAN_SAVE_DIR,
+    SAVE_DIR,
+    MODEL_FILENAME,
+    ONNX_MODEL_PATH,
 )
 
 
@@ -66,14 +69,14 @@ def main():
     lunar_catalog = pd.read_csv(LUNAR_CATALOG_PATH)
 
     # Preprocess lunar data
-    preprocessor = ImageHandler(LUNAR_SAVE_DIR)
-    lunar_data, lunar_labels, lunar_arrival_times = preprocessor.preprocess_lunar_data(
+    image_handler = ImageHandler(LUNAR_SAVE_DIR)
+    lunar_data, lunar_labels, lunar_arrival_times = image_handler.preprocess_lunar_data(
         catalog=lunar_catalog, data_dir=LUNAR_DATA_DIR, combine_images=True
     )
 
     # Convert arrival times to relative time in seconds
     reference_time = pd.Timestamp("1970-01-01")
-    lunar_arrival_times_in_seconds = preprocessor.convert_abs_to_rel_time(
+    lunar_arrival_times_in_seconds = image_handler.convert_abs_to_rel_time(
         lunar_arrival_times, reference_time
     )
 
@@ -117,21 +120,19 @@ def main():
     lunar_trainer.evaluate(lunar_test_loader)
 
     # Save the trained model
-    lunar_trainer.save_cnn_model(f"{LUNAR_SAVE_DIR}/lunar_seismic_cnn_model_full.pth")
-    lunar_trainer.save_cnn_model_state_dict(
-        f"{LUNAR_SAVE_DIR}/lunar_seismic_cnn_model_state_dict.pth"
-    )
+    model_path = f"{SAVE_DIR}/{MODEL_FILENAME}_full.pth"
+    model_path_dict = f"{SAVE_DIR}/{MODEL_FILENAME}_dict.pth"
+    lunar_trainer.save_cnn_model(model_path)
+    lunar_trainer.save_cnn_model_state_dict(model_path_dict)
 
     # Load the full pretrained lunar model
-    loaded_cnn_model = torch.load(f"{LUNAR_SAVE_DIR}/lunar_seismic_cnn_model_full.pth")
+    loaded_cnn_model = torch.load(model_path)
     martian_trainer = ModelTrainer(loaded_cnn_model, criterion_time, optimizer)
 
     # Preprocess and self-train on Martian data
-    preprocessor = ImageHandler(MARTIAN_SAVE_DIR)
-    martian_images, _ = preprocessor.preprocess_martian_data(data_dir=MARTIAN_DATA_DIR)
-    martian_data_loader = dataloader_handler.prepare_unlabeled_data_loader(
-        martian_images
-    )
+    image_handler = ImageHandler(MARTIAN_SAVE_DIR)
+    martian_images, _ = image_handler.preprocess_martian_data(data_dir=MARTIAN_DATA_DIR)
+    martian_data_loader = dataloader_handler.get_unlabeled_data_loader(martian_images)
 
     # Self-training on Martian data
     martian_trainer.self_train_on_martian_data(
@@ -139,15 +140,16 @@ def main():
     )
 
     # Save the fine-tuned model after self-training on Martian data
-    martian_trainer.save_cnn_model(
-        f"{MARTIAN_SAVE_DIR}/martian_seismic_cnn_model_full.pth"
-    )
-    martian_trainer.save_cnn_model_state_dict(
-        f"{MARTIAN_SAVE_DIR}/martian_seismic_cnn_model_state_dict.pth"
-    )
+    martian_trainer.save_cnn_model(model_path)
+    martian_trainer.save_cnn_model_state_dict(model_path_dict)
 
     # Evaluate the model and compute metrics on the test set
     evaluate_and_get_metrics(martian_trainer, lunar_test_loader)
+
+    print("Loading data for onnx model")
+    cnn_model.save_pytorch_model_to_onnx(
+        model_path_dict, ONNX_MODEL_PATH, MARTIAN_DATA_DIR, MARTIAN_SAVE_DIR
+    )
 
 
 if __name__ == "__main__":

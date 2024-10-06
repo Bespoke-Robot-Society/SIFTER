@@ -1,5 +1,7 @@
 import torch
 import torch.nn as nn
+from utils.helpers import load_real_data
+
 
 class SpectrogramArrivalCNN(nn.Module):
     def __init__(self):
@@ -45,3 +47,48 @@ class SpectrogramArrivalCNN(nn.Module):
         time_output = self.fc_time(x)
 
         return time_output
+
+    def save_pytorch_model_to_onnx(
+        self, model_path_dict, onnx_model_path, data_dir, save_dir, opset_version=11
+    ):
+        """
+        Save a PyTorch model to ONNX format using real input data.
+
+        Args:
+            model_path (str): Path to the PyTorch model (.pth file).
+            onnx_model_path (str): Path to save the ONNX model (.onnx file).
+            real_input (torch.Tensor): Real input data to use for model export.
+            opset_version (int): ONNX opset version to use (default is 11).
+        """
+        # load real data
+        real_input = load_real_data(data_dir, save_dir)
+
+        # Export the model to ONNX format using real input
+        torch.onnx.export(
+            self.load_model(model_path_dict),  # The model to be exported
+            real_input,  # Use real input data
+            onnx_model_path,  # Path where the ONNX model will be saved
+            export_params=True,  # Store the trained parameter weights inside the model
+            opset_version=opset_version,  # ONNX version to use
+            do_constant_folding=True,  # Simplify the model by folding constants
+            input_names=["input"],  # Input name in the ONNX model
+            output_names=["output"],  # Output name in the ONNX model
+            dynamic_axes={
+                "input": {0: "batch_size"},
+                "output": {0: "batch_size"},
+            },  # Dynamic batch size support
+        )
+
+        print(f"Model successfully exported to {onnx_model_path}")
+
+    # Added function to load model and handle state dict
+    def load_model(self, state_dict_path):
+        state_dict = torch.load(state_dict_path, map_location=torch.device("cpu"))
+
+        # Filter out unexpected keys
+        model_dict = self.state_dict()
+        state_dict = {k: v for k, v in state_dict.items() if k in model_dict}
+
+        # Load the filtered state dict
+        self.load_state_dict(state_dict, strict=False)
+        return self
