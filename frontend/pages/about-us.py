@@ -41,9 +41,9 @@ def bio_text(fn):
 aaron_profile = Profile("Aaron W. Storey", bio_text("assets/aaron.txt"), "/assets/AaronPhoto.JPG")
 andy_profile = Profile("Andy Ponce", bio_text("assets/andy.txt"), "assets/AndyPhoto.JPG")
 john_profile = Profile("John P. McCardle III", bio_text("assets/john.txt"), "/assets/JohnPhoto.JPG")
-#jason_profile
+jason_profile = Profile("Jason Jain", bio_text("assets/jason.txt"), image_placeholder)
 #lee_profile
-#robert_profile
+robert_profile = Profile("Robert Turner", bio_text("assets/rob.txt"), image_placeholder)
 profile_placeholder = Profile("Your Name", description_placeholder, image_placeholder)
 
 layout = html.Div(
@@ -51,9 +51,9 @@ layout = html.Div(
         html.H1("About Us"),
         bespoke_robot_image,
         aaron_profile,
-        profile_placeholder,
+        jason_profile,
         andy_profile,
-        profile_placeholder,
+        robert_profile,
         profile_placeholder,
         john_profile,
     ],
