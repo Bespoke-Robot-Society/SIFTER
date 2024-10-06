@@ -13,11 +13,19 @@ styles = {
 
 links = [{"label": "Home", "href": "/"}, {"label": "About Us", "href": "/about-us"}]
 
+logo_img = \
+    html.Img(
+        src='/assets/images/sifter_cicdbot_icon.png',
+        alt="S.I.F.T.E.R. Logo",
+        className="img-fluid rounded-circle",
+        style={"width": "100px", "height": "100px"}
+    )
 
 def get_header():
     header = html.Header(
         children=[
-            html.H2("S.I.F.T.E.R.", style={"flex": 1}),
+            html.Div([html.H2("S.I.F.T.E.R."),logo_img], style={"flex": 1,"align-items": "center"}),
+            
             html.Div(
                 [
                     html.Div(
