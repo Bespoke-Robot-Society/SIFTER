@@ -61,6 +61,7 @@ class SpectrogramCNN(nn.Module):
     ):
         """Training on a unlabeled martian dataset"""
         self.train()  # Set the model to training mode
+        print(len(martian_data_loader.dataset))
         for epoch in range(num_epochs):  # Loop over epochs
             running_loss = 0.0  # Track loss for current epoch
             for batch in martian_data_loader:
@@ -85,6 +86,10 @@ class SpectrogramCNN(nn.Module):
                 optimizer.step()  # Update model parameters
 
                 running_loss += total_loss.item()  # Accumulate the running loss
+            # Print the average loss for the epoch
+            print(
+                f"Self-training Epoch {epoch+1}, Loss: {running_loss/len(martian_data_loader)}"
+            )
 
     # Model Evaluation
     def evaluate_model(self, data_loader):

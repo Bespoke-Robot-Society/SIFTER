@@ -30,10 +30,14 @@ def prepare_lunar_data_for_training(
 
     print("Preparing DataLoader for lunar training data...")
     training_spectrogram_data_loader = SpectrogramDataLoader(
-        X_train, y_event_train, y_time_train
+        X_train,
+        y_time_train,
+        y_event_train,
     )
     validation_spectrogram_data_loader = SpectrogramDataLoader(
-        X_val, y_event_val, y_time_val
+        X_val,
+        y_time_val,
+        y_event_val,
     )
     train_loader = training_spectrogram_data_loader.get_data_loader()
     val_loader = validation_spectrogram_data_loader.get_data_loader()
@@ -50,8 +54,7 @@ def prepare_martian_data_for_training(martian_data, martian_arrival_times):
     print("Preparing DataLoader for Martian data (self-training)...")
     training_spectrogram_data_loader = SpectrogramDataLoader(
         martian_data,
-        labels=[0] * len(martian_data),
-        time_labels=[0] * len(martian_data),
+        time_labels=martian_arrival_times,
     )  # Placeholder labels
     train_loader = training_spectrogram_data_loader.get_unlabeled_data_loader()
 
@@ -79,10 +82,13 @@ def train_and_save_model():
     # Prepare DataLoader for training
     lunar_labels_encoded = [0] * len(lunar_data)  # Placeholder labels
     lunar_arrival_times_numeric = [0] * len(lunar_data)  # Placeholder arrival times
+    martian_arrival_times_numeric = [0] * len(martian_data)  # Placeholder arrival times
     lunar_train_loader, lunar_val_loader = prepare_lunar_data_for_training(
         lunar_data, lunar_labels_encoded, lunar_arrival_times_numeric
     )
-    martian_train_loader = prepare_martian_data_for_training(martian_data)
+    martian_train_loader = prepare_martian_data_for_training(
+        martian_data, martian_arrival_times_numeric
+    )
 
     print("Initializing SpectrogramCNN model...")
     model = SpectrogramCNN()

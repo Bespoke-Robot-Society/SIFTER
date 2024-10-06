@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader, TensorDataset
 
 
 class SpectrogramDataLoader:
-    def __init__(self, image_files, labels, time_labels, batch_size=32):
+    def __init__(self, image_files, time_labels, labels=None, batch_size=32):
         self.image_files = image_files
         self.labels = labels
         self.time_labels = time_labels
