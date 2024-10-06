@@ -22,7 +22,7 @@ bespoke_robot_image = \
                 dbc.Col(
                     [
                     html.Img(
-                        src="/assets/brs_transparency.png",  # replace with your image URL
+                        src="/assets/images/brs_transparency.png",  # replace with your image URL
                         alt="Profile Picture",
                         style={"width": "300px", "height": "300px"}
                     ),
@@ -30,7 +30,7 @@ bespoke_robot_image = \
                     width={"size": 2, "offset": 5},
                     className="text-center"
                 )
-andy_profile = Profile("Andy Ponce", description_placeholder, "/assets/AndyPhoto.JPG")
+andy_profile = Profile("Andy Ponce", description_placeholder, "/assets/images/profiles/AndyPhoto.JPG")
 profile_placeholder = Profile("Your Name", description_placeholder, image_placeholder)
 
 layout = html.Div(
