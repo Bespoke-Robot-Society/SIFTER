@@ -12,3 +12,6 @@ model/
 
 # Ignore directory
 .vscode
+
+# Ignore cache
+__pycache__/
