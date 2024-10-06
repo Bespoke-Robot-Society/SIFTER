@@ -4,6 +4,8 @@ venv
 
 # Ignore data directory
 data/
+model/
+
 
 # Ignore directory
 .ipynb_checkpoints/
