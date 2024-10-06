@@ -1,5 +1,6 @@
 import torch
 
+
 class ModelTrainer:
     def __init__(self, cnn_model, criterion_time, optimizer):
         self.cnn_model = cnn_model  # Keep model on CPU
@@ -13,7 +14,7 @@ class ModelTrainer:
         self.cnn_model.train()  # Set the model to training mode
 
         for epoch in range(num_epochs):
-            running_loss = 0.0
+            running_loss_time = 0.0
             for batch in train_loader:
                 # Unpack batch depending on the structure returned by the dataloader
                 if isinstance(batch, (list, tuple)):
@@ -36,9 +37,11 @@ class ModelTrainer:
                     self.optimizer.step()
 
                     # Accumulate the loss
-                    running_loss += loss.item()
+                    running_loss_time += loss.item()
 
-            print(f"Epoch [{epoch + 1}/{num_epochs}], Loss: {running_loss / len(train_loader)}")
+            print(
+                f"Epoch [{epoch + 1}/{num_epochs}], Loss: {running_loss_time / len(train_loader)}"
+            )
 
     def evaluate(self, test_loader):
         """
@@ -57,6 +60,7 @@ class ModelTrainer:
 
                 # Forward pass
                 time_output = self.cnn_model(inputs)
+                time_labels = time_labels.view(-1, 1)  # Reshaping the target tensor
 
                 # Compute the loss
                 if time_labels is not None:
@@ -65,8 +69,9 @@ class ModelTrainer:
 
         print(f"Test Loss: {total_loss / len(test_loader)}")
 
-
-    def self_train_on_martian_data(self, martian_data_loader, criterion_time, num_epochs=10):
+    def self_train_on_martian_data(
+        self, martian_data_loader, criterion_time, num_epochs=10
+    ):
         """
         Fine-tune the lunar model on Martian data using time prediction with pseudo-labeling.
         """
@@ -99,7 +104,9 @@ class ModelTrainer:
                 # Accumulate losses for monitoring
                 running_loss_time += loss_time.item()
 
-            print(f"Epoch [{epoch + 1}/{num_epochs}], Loss Time: {running_loss_time / len(martian_data_loader)}")
+            print(
+                f"Epoch [{epoch + 1}/{num_epochs}], Loss: {running_loss_time / len(martian_data_loader)}"
+            )
 
     def save_cnn_model(self, path):
         """
