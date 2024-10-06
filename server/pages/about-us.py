@@ -2,11 +2,11 @@ import dash
 from dash import html, dcc, callback, Input, Output
 from components.profile import Profile
 import dash_bootstrap_components as dbc
+
 dash.register_page(__name__)
 
 styles = {"padding": "20px"}
-description_placeholder = \
-"""
+description_placeholder = """
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam rhoncus tempus vestibulum. 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
 Maecenas ante felis, sagittis ac convallis non, congue sit amet libero. Fusce ac accumsan augue. 
@@ -18,18 +18,17 @@ Curabitur malesuada pellentesque rutrum.
 Proin auctor ligula sem, et tristique magna iaculis mollis. Nulla ac dui justo. 
 """
 image_placeholder = "https://via.placeholder.com/200"
-bespoke_robot_image = \
-                dbc.Col(
-                    [
-                    html.Img(
-                        src="/assets/brs_transparency.png",  # replace with your image URL
-                        alt="Profile Picture",
-                        style={"width": "300px", "height": "300px"}
-                    ),
-                    ],
-                    width={"size": 2, "offset": 5},
-                    className="text-center"
-                )
+bespoke_robot_image = dbc.Col(
+    [
+        html.Img(
+            src="/assets/brs_transparency.png",  # replace with your image URL
+            alt="Profile Picture",
+            style={"width": "300px", "height": "300px", "padding": "0px"},
+        ),
+    ],
+    width={"size": 2, "offset": 5},
+    className="text-center",
+)
 andy_profile = Profile("Andy Ponce", description_placeholder, "/assets/AndyPhoto.JPG")
 profile_placeholder = Profile("Your Name", description_placeholder, image_placeholder)
 
