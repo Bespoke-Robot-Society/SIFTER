@@ -1,7 +1,7 @@
 import os
 from config import SAVE_DIR, MODEL_FILENAME, CATALOG_PNG_DIR, TEST_DATA_DIRS
 
-from cnn.model_predictor import Predictor
+from model.model_predictor import Predictor
 
 # Main execution
 if __name__ == "__main__":
