@@ -12,3 +12,6 @@ model/
 
 # Ignore directory
 .vscode
+
+# Ignore file extension
+*.pth
