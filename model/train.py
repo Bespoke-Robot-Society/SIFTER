@@ -7,7 +7,7 @@ import torch
 import torch.optim as optim
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-from cnn.cnn_model import SpectrogramArrivalCNN, save_pytorch_model_to_onnx
+from cnn.cnn_model import SpectrogramArrivalCNN
 from preprocessing.imagehandler import ImageHandler
 from cnn.model_trainer import ModelTrainer
 from preprocessing.dataloader import DataLoaderHandler
@@ -147,8 +147,8 @@ def main():
     evaluate_and_get_metrics(martian_trainer, lunar_test_loader)
 
     print("Loading data for onnx model")
-    save_pytorch_model_to_onnx(
-        cnn_model, model_path_dict, ONNX_MODEL_PATH, MARTIAN_DATA_DIR, MARTIAN_SAVE_DIR
+    cnn_model.save_pytorch_model_to_onnx(
+        model_path_dict, ONNX_MODEL_PATH, MARTIAN_DATA_DIR, MARTIAN_SAVE_DIR
     )
 
 

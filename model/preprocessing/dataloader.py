@@ -64,7 +64,6 @@ class DataLoaderHandler:
 
         if image_tensors:
             X_tensor = torch.stack(image_tensors)
-            print(X_tensor.shape)
             dataset = TensorDataset(X_tensor)
             return DataLoader(dataset, batch_size=self.batch_size, shuffle=False)
         else:
