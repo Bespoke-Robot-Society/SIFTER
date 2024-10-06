@@ -1,4 +1,4 @@
-from dash import html
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 class Profile:
@@ -48,7 +48,7 @@ class Profile:
                     className="text-center"
                 ),
                 dbc.Col(
-                [html.H3(self.name)] + [html.P(txt) for txt in self.description.split('\n\n')],
+                [html.H3(self.name)] + [dcc.Markdown(self.description)],
                 width=7
             )
             ],
