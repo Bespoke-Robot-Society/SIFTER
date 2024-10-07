@@ -9,7 +9,6 @@ from model.model_predictor import Predictor
 
 
 def predict():
-    print("HELLO")
     # Directory to save .png plots
     if not os.path.exists(CATALOG_PNG_DIR):
         os.makedirs(CATALOG_PNG_DIR)
