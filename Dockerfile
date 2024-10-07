@@ -11,10 +11,10 @@ WORKDIR /app
 # Install dependencies
 #COPY requirements.txt /app/
 COPY . /app/
-RUN pip install --no-cache-dir -r server/requirements.txt
+RUN pip install --no-cache-dir -r frontend/requirements.txt
 
 # Expose the Dash app port
 EXPOSE 8050 
 
 # Command to run the Dash app
-CMD ["python", "server/app.py"]
+CMD ["python", "frontend/app.py"]
