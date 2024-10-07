@@ -1,79 +1,19 @@
 import os
 import dash
-from dash import Dash, html, dash_table, dcc, callback, Output, Input
-import pandas as pd
-import numpy as np
-import plotly.express as px
+from dash import Dash, html, dcc, callback, Output, Input
 import dash_bootstrap_components as dbc
 
+# Register Dash page
 dash.register_page(__name__, path="/")
 
-# Generate fake data for Velocity vs. Time
-def generate_velocity_data(num_points=250):
-    time = np.linspace(0, 100, num_points)
-    raw_velocity = np.sin(time) + np.random.normal(0, 0.5, num_points)
-    sifted_velocity = np.sin(time)
-    df = pd.DataFrame({'Time': time, 'Raw Velocity': raw_velocity, 'Sifted Velocity': sifted_velocity})
-    return df
+# Define the path to the folder containing the images
+image_folder = 'frontend/assets/images/output_graphs'
+rel_image_folder = 'assets/images/output_graphs'
 
-# Generate fake data for Arrival Times
-def generate_arrival_times_data(num_points=250):
-    event_id = np.arange(1, num_points + 1)
-    true_arrival_times = np.sort(np.random.uniform(0, 1000, num_points))
-    predicted_arrival_times = true_arrival_times + np.random.normal(0, 20, num_points)
-    df = pd.DataFrame({
-        'Event ID': event_id,
-        'True Arrival Time': true_arrival_times,
-        'Predicted Arrival Time': predicted_arrival_times
-    })
-    return df
+# Get a list of all PNG files in the folder
+image_list = [f for f in os.listdir(image_folder) if f.endswith('.png')]
 
-# Create Velocity vs. Time plot
-def create_velocity_vs_time_plot():
-    df = generate_velocity_data()
-    fig = px.line(
-        df,
-        x='Time',
-        y=['Raw Velocity', 'Sifted Velocity'],
-        labels={'value': 'Velocity', 'variable': 'Data Type'},
-        title='Velocity vs. Time for Raw and Sifted Data'
-    )
-    fig.update_layout(title={'x': 0.5}, legend_title_text='Data Type')
-    fig.for_each_trace(
-        lambda t: t.update(line=dict(dash='solid' if t.name == 'Sifted Velocity' else 'dot'))
-    )
-    return fig
-
-# Create Arrival Times plot
-def create_arrival_times_plot():
-    df = generate_arrival_times_data()
-    fig = px.scatter(
-        df,
-        x='True Arrival Time',
-        y='Predicted Arrival Time',
-        labels={
-            'True Arrival Time': 'True Arrival Time',
-            'Predicted Arrival Time': 'Predicted Arrival Time'
-        },
-        title='True Arrival Times vs. Predicted Arrival Times',
-        opacity=0.7
-    )
-    fig.update_layout(title={'x': 0.5}, legend_title_text='Legend')
-    # Add ideal prediction line y=x
-    fig.add_shape(
-        type='line',
-        x0=df['True Arrival Time'].min(),
-        y0=df['True Arrival Time'].min(),
-        x1=df['True Arrival Time'].max(),
-        y1=df['True Arrival Time'].max(),
-        line=dict(color='Red', dash='dash'),
-        name='Ideal Prediction'
-    )
-    # Bring the ideal line to back
-    fig['data'] = fig['data'][1:] + fig['data'][:1]
-    return fig
-
-# Layout with improved design
+# Layout
 layout = dbc.Container([
     # Header Section
     dbc.Row([
@@ -86,7 +26,7 @@ layout = dbc.Container([
     ], className="my-4"),
 
     # Introduction Section
-    dbc.Row([
+    dbc.Row([  
         dbc.Col([
             html.P(
                 """
@@ -107,14 +47,11 @@ layout = dbc.Container([
     # Visualization Section
     dbc.Row([
         dbc.Col([
-            html.Label("Select a Visualization to View", className="h5"),
+            html.Label("Select an Image to View", className="h5"),
             dcc.Dropdown(
-                id='graph-dropdown',
-                options=[
-                    {'label': 'Velocity vs. Time', 'value': 'velocity_time'},
-                    {'label': 'True vs. Predicted Arrival Times', 'value': 'arrival_times'}
-                ],
-                value='velocity_time',
+                id='image-dropdown',
+                options=[{'label': img, 'value': img} for img in image_list],
+                value=image_list[0] if image_list else None,
                 clearable=False
             ),
         ], width=6, className='mx-auto')
@@ -122,7 +59,7 @@ layout = dbc.Container([
 
     dbc.Row([
         dbc.Col([
-            dcc.Graph(id='graph'),
+            html.Img(id='image-display', style={'width': '100%', 'height': 'auto'}),
             html.P(id='dynamic-text', className="mt-3")
         ], width=10, className='mx-auto')
     ], className="mb-5"),
@@ -132,26 +69,26 @@ layout = dbc.Container([
         dbc.Col([
             html.H2("About Our Model", className="my-4"),
             html.P(
-                "Our model leverages state-of-the-art machine learning algorithms to analyze seismic data with unprecedented accuracy and efficiency."
+                """The S.I.F.T.E.R. project utilizes a hybrid approach combining two models: STA/LTA (Short-Term Average/Long-Term Average) method and a Convolutional Neural-Network (CNN) model to analyze seismic data. The STA/LTA trigger identifies potential seismic event arrivals by detecting significant changes in the signal's amplitude over short and long time windows. When the STA/LTA ratio exceeds a threshold of 3.5, it flags relevant time windows where an event might have occurred, which then passes the interesting time periods to produce a spectrogram for the CNN to analyze."""
+            ),
+            html.P(
+                """Generated spectrograms are then passed to our CNN, which is trained to identify seismic events and predict the precise event arrival time. CNNs are commonly used in image analysis, because they are able to analyze neighboring blocks (like pixels) in their input. We are passing our CNN an image of a spectrogram, so features like sharp edges in time and frequency become features the model can detect. The CNN model is designed to handle potentially noisy seismic data with the use of multiple convolutional layers, batch normalization, and dropout for regularization. The convolutional layers help the model extract local patterns in the spectrograms, such as characteristic frequency bursts associated with seismic events, while max-pooling reduces dimensionality and focuses on the most important features. The CNN refines the estimates provided by STA/LTA by analyzing deeper patterns in the spectrogram."""
             )
         ], width=10)
     ], className="justify-content-center")
 ], fluid=True)
 
-# Callback to update graph and text
+# Callback to update image and text
 @callback(
-    [Output('graph', 'figure'),
+    [Output('image-display', 'src'),
      Output('dynamic-text', 'children')],
-    [Input('graph-dropdown', 'value')]
+    [Input('image-dropdown', 'value')]
 )
-def update_graph(value):
-    if value == 'velocity_time':
-        plotly_fig = create_velocity_vs_time_plot()
-        text = "This visualization represents velocity over time for raw and sifted seismic data."
-    elif value == 'arrival_times':
-        plotly_fig = create_arrival_times_plot()
-        text = "This visualization compares true arrival times with predicted arrival times."
-    else:
-        plotly_fig = {}
-        text = "No visualization selected."
-    return plotly_fig, text
+def update_image(value):
+    # Update image source
+    image_src = f'/{rel_image_folder}/{value}'
+    
+    # Update text description based on selected image
+    text = f"This image represents seismic data for {value}."
+    
+    return image_src, text
