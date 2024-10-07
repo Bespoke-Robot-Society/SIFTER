@@ -43,7 +43,7 @@ andy_profile = Profile("Andy Ponce", bio_text("assets/andy.txt"), "assets/AndyPh
 john_profile = Profile("John P. McCardle III", bio_text("assets/john.txt"), "/assets/JohnPhoto.JPG")
 jason_profile = Profile("Jason Jain", bio_text("assets/jason.txt"), "/assets/JasonPhoto.JPG")
 lee_profile = Profile("Lee Gamon", bio_text("assets/lee.txt"), "/assets/LeePhoto.JPG")
-robert_profile = Profile("Robert Turner", bio_text("assets/rob.txt"), "/assets/RobertPhoto.JPG")
+robert_profile = Profile("Robert Turner", bio_text("assets/rob.txt"), "/assets/RobPhoto.JPG")
 profile_placeholder = Profile("Your Name", description_placeholder, image_placeholder)
 
 layout = html.Div(
