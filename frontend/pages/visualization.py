@@ -19,7 +19,7 @@ layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             html.H1("S.I.F.T.E.R.", className="display-3"),
-            html.H4("Seismic Investigation and Frequency Tracking for Extraterrestrial Research",
+            html.H4("Seismic Intelligent Feature and Time Extraction Recognizer",
                     className="text-muted"),
             html.Hr(className="my-2"),
         ], width=12, className='text-center')
@@ -33,11 +33,12 @@ layout = dbc.Container([
                 S.I.F.T.E.R. is a comprehensive project designed to analyze seismic data from planetary missions, 
                 particularly the Apollo and Mars InSight Lander. The primary goal is to detect seismic events 
                 (e.g., quakes) and distinguish them from noise using machine learning models and advanced seismic 
-                processing techniques. This project integrates data from lunar, Martian, and Earth-based seismic 
-                sources, optimizing the system for deployment on non-terrestrial seismometers. The system is 
-                initially developed in Python for rapid prototyping and machine learning, then finalized in C++ 
+                processing techniques. This project integrates data from lunar and Martian, 
+                optimizing the system for deployment on non-terrestrial seismometers. The system is 
+                initially developed in Python for rapid prototyping and machine learning. Future plans to finalize in C++ 
                 for deployment in low-power environments on planetary missions. A terrestrial front-end is included 
-                for real-time analysis and visualization, leveraging tools such as Streamlit, Plotly, or Dash.
+                for visualization, leveraging tools such as Plotly and Dash. Future work includes updates for live
+                data visualization and analysis.
                 """,
                 className="lead"
             )
