@@ -41,9 +41,9 @@ def bio_text(fn):
 aaron_profile = Profile("Aaron W. Storey", bio_text("assets/aaron.txt"), "/assets/AaronPhoto.JPG")
 andy_profile = Profile("Andy Ponce", bio_text("assets/andy.txt"), "assets/AndyPhoto.JPG")
 john_profile = Profile("John P. McCardle III", bio_text("assets/john.txt"), "/assets/JohnPhoto.JPG")
-jason_profile = Profile("Jason Jain", bio_text("assets/jason.txt"), image_placeholder)
-#lee_profile
-robert_profile = Profile("Robert Turner", bio_text("assets/rob.txt"), image_placeholder)
+jason_profile = Profile("Jason Jain", bio_text("assets/jason.txt"), "/assets/JasonPhoto.JPG")
+lee_profile = Profile("Lee Gamon", bio_text("assets/lee.txt"), "/assets/LeePhoto.JPG")
+robert_profile = Profile("Robert Turner", bio_text("assets/rob.txt"), "/assets/RobertPhoto.JPG")
 profile_placeholder = Profile("Your Name", description_placeholder, image_placeholder)
 
 layout = html.Div(
@@ -54,7 +54,7 @@ layout = html.Div(
         jason_profile,
         andy_profile,
         robert_profile,
-        profile_placeholder,
+        lee_profile,
         john_profile,
     ],
     style=styles,
