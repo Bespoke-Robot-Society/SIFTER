@@ -1,8 +1,6 @@
-import torch
 import torch.onnx
 from torch.utils.data import DataLoader, TensorDataset
 from preprocessing.imagehandler import ImageHandler
-from PIL import Image
 from preprocessing.dataloader import DataLoaderHandler
 
 

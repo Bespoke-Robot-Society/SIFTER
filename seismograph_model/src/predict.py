@@ -1,16 +1,21 @@
 import os
-from config import SAVE_DIR, MODEL_FILENAME, CATALOG_PNG_DIR, TEST_DATA_DIRS
-
+from config import (
+    SAVE_DIR,
+    MODEL_FILENAME,
+    CATALOG_PNG_DIR,
+    TEST_DATA_DIRS,
+)
 from model.model_predictor import Predictor
 
-# Main execution
-if __name__ == "__main__":
 
+def predict():
+    print("HELLO")
     # Directory to save .png plots
     if not os.path.exists(CATALOG_PNG_DIR):
         os.makedirs(CATALOG_PNG_DIR)
 
     # Instantiate the Predictor class with the model path and save directories
+    print(os.path.join(SAVE_DIR, MODEL_FILENAME))
     predictor = Predictor(
         cnn_model_path=os.path.join(SAVE_DIR, MODEL_FILENAME),
         save_dir=SAVE_DIR,
@@ -20,3 +25,6 @@ if __name__ == "__main__":
 
     # Run the prediction process on the defined test data directories
     predictor.process_and_predict(test_data_dirs=TEST_DATA_DIRS)
+
+
+predict()

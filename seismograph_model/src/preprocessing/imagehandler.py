@@ -148,6 +148,7 @@ class ImageHandler:
         for idx, row in catalog.iterrows():
             filename = row["filename"] + ".mseed"
             file_path = os.path.join(data_dir, filename)
+
             if os.path.exists(file_path):
                 arrival_time_rel = row["time_rel(sec)"]
                 arrival_time_abs = row["time_abs(%Y-%m-%dT%H:%M:%S.%f)"]

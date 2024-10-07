@@ -3,10 +3,8 @@ import torch
 import pandas as pd
 from obspy import read
 from obspy.signal.trigger import classic_sta_lta, trigger_onset
-from datetime import datetime, timedelta
+from datetime import timedelta
 import matplotlib.pyplot as plt
-import numpy as np
-from config import SAVE_DIR, MODEL_FILENAME, CATALOG_PNG_DIR, TEST_DATA_DIRS
 
 
 class STA_LTA_Processor:

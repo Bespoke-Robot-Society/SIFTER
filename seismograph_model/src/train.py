@@ -7,9 +7,9 @@ import torch
 import torch.optim as optim
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-from cnn.cnn_model import SpectrogramArrivalCNN
+from model.cnn_model import SpectrogramArrivalCNN
 from preprocessing.imagehandler import ImageHandler
-from cnn.model_trainer import ModelTrainer
+from model.model_trainer import ModelTrainer
 from preprocessing.dataloader import DataLoaderHandler
 from config import (
     LUNAR_CATALOG_PATH,
