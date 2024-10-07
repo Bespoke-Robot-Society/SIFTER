@@ -1,0 +1,20 @@
+John McCardle is a wizard
+
+```python
+>>> john
+John(
+    employers=[
+        <Employer name="United States Air Force", years=6>,
+        <Employer name="University of South Florida", years=3>, 
+        <Employer name="National Aeronautics and Space Administration (NASA)", years=7>
+    ],
+    roles={'Kennedy Amateur Radio Club': 'President', 'Bespoke Robot Society': 'Founder'}, 
+    skills=["Python tinkerer", "educator", "dad"], 
+    quirks="Truncated for length"
+)
+```
+
+Clickables:
+* [My favorite side project, McRogueFace](https://github.com/jmccardle/McRogueFace)
+* [blog](https://kn4obl.net/)
+* [Bespoke Robot Society's wiki](https://wiki.bespokerobotsociety.org/)
