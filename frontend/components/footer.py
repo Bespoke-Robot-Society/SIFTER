@@ -10,7 +10,7 @@ def get_footer():
                 html.P(
                     [
                         html.Strong("Disclaimer: "),
-                        "This version of the project was submitted on 10/6/2024 for the 2024 NASA Space Apps Challenge. No further updates to this project or code will be posted to this site until judging has been finalized. For the most recent updated version of the project, please visit the",
+                        "This version of the project was submitted on 10/6/2024 for the 2024 NASA Space Apps Challenge. No further updates to this project or code will be posted to this site until judging has been finalized. For the most recent updated version of the project, please visit the ",
                         html.A("project repo on GitHub", href="https://github.com/Bespoke-Robot-Society/SIFTER"),
                         "."
                     ],
