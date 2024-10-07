@@ -1,4 +1,4 @@
-from dash import html
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 class Profile:
@@ -35,7 +35,7 @@ class Profile:
         self.image_width = image_width
         self.image_height = image_height
         self.profile = \
-                dbc.Row(
+            dbc.Row(
             [
                 dbc.Col(
                     html.Img(
@@ -48,12 +48,9 @@ class Profile:
                     className="text-center"
                 ),
                 dbc.Col(
-                    [
-                        html.H3(self.name),
-                        html.P(self.description),
-                    ],
-                    width=7
-                ),
+                [html.H3(self.name)] + [dcc.Markdown(self.description)],
+                width=7
+            )
             ],
             className="mt-4"
         )
