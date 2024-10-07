@@ -13,5 +13,8 @@ model_output/
 # Ignore directory
 .vscode
 
+# Ignore cache
+__pycache__/
+
 # Ignore file extension
 *.pth
