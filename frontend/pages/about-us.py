@@ -24,7 +24,7 @@ image_placeholder = "https://via.placeholder.com/200"
 bespoke_robot_image = dbc.Col(
     [
         html.Img(
-            src="/assets/brs_transparency.png",  # replace with your image URL
+            src="/assets/images/brs_transparency.png",
             alt="Profile Picture",
             style={"width": "300px", "height": "300px", "padding": "0px"},
         ),
